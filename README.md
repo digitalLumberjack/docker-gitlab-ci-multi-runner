@@ -130,6 +130,15 @@ You can increase the log maximum size by setting the RUNNER_OUTPUT_LIMIT variabl
 
 See https://docs.gitlab.com/ce/ci/docker/using_docker_build.html for more info.
 
+
+## Using kubernetes executor
+
+You can use the docker executor by using `RUNNER_EXECUTOR=kubernetes`. It will autodiscover the kubernetes server and credentials.
+You can precise the default docker image used and the namespace using  RUNNER_DOCKER_IMAGE and RUNNER_KUBERNETES_NAMESPACE. Else if will use the IMAGE provided in CI file and default namespace.
+
+
+
+
 ## Concurrent jobs
 You an setup your runner to start multiple job in parallel by setting the environment variable `RUNNER_CONCURRENT` to the number of jobs you want to run concurrently.
  

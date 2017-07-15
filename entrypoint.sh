@@ -67,11 +67,18 @@ configure_ci_runner() {
         fi
         if [[ -n ${RUNNER_DOCKER_ADDITIONAL_VOLUME} ]];then
           RUNNER_DOCKER_ARGS="$RUNNER_DOCKER_ARGS --docker-volumes ${RUNNER_DOCKER_ADDITIONAL_VOLUME}"
-        fi
+        fi         
+      elif [[ "${RUNNER_EXECUTOR}" == "kubernetes" ]];then
+      if [[ -n ${RUNNER_DOCKER_IMAGE} ]];then
+        RUNNER_DOCKER_ARGS="--kubernetes-image ${RUNNER_DOCKER_IMAGE}"
       fi
+      if [[ -n ${RUNNER_KUBERNETES_NAMESPACE} ]]; then
+        RUNNER_DOCKER_ARGS="$RUNNER_DOCKER_ARGS  --kubernetes-namespace ${RUNNER_KUBERNETES_NAMESPACE}"
+      fi
+    fi
       sudo -HEu ${GITLAB_CI_MULTI_RUNNER_USER} \
         gitlab-ci-multi-runner register --config ${GITLAB_CI_MULTI_RUNNER_DATA_DIR}/config.toml \
-          -n -u "${CI_SERVER_URL}" -r "${RUNNER_TOKEN}" --name "${RUNNER_DESCRIPTION}" --executor "${RUNNER_EXECUTOR}" --output-limit "${RUNNER_OUTPUT_LIMIT}" ${RUNNER_DOCKER_ARGS}
+        -n -u "${CI_SERVER_URL}" -r "${RUNNER_TOKEN}" --name "${RUNNER_DESCRIPTION}" --executor "${RUNNER_EXECUTOR}" --output-limit "${RUNNER_OUTPUT_LIMIT}" ${RUNNER_DOCKER_ARGS}
     else
       sudo -HEu ${GITLAB_CI_MULTI_RUNNER_USER} \
         gitlab-ci-multi-runner register --config ${GITLAB_CI_MULTI_RUNNER_DATA_DIR}/config.toml
