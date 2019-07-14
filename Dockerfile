@@ -1,11 +1,12 @@
 FROM sameersbn/ubuntu:14.04.20180124
 MAINTAINER sameer@damagehead.com
 
-ENV GITLAB_RUNNER_VERSION=10.7.0 \
+ENV GITLAB_RUNNER_VERSION=11.9.0 \
     GITLAB_RUNNER_USER=gitlab_runner \
     GITLAB_RUNNER_HOME_DIR="/home/gitlab_runner"
 ENV GITLAB_RUNNER_DATA_DIR="${GITLAB_RUNNER_HOME_DIR}/data"
 
+ENV DOCKER_VERSION=18.09.7
 ENV CA_CERTIFICATES_PATH=''
 ENV RUNNER_CONCURRENT=''
 ENV CI_SERVER_URL=''
@@ -26,13 +27,18 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E1DD270288B4E60
  && echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu trusty main" >> /etc/apt/sources.list \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      git-core openssh-client curl libapparmor1 \
+      git-core openssh-client curl libapparmor1 jq \
  && wget -O /usr/local/bin/gitlab-runner \
       https://gitlab-runner-downloads.s3.amazonaws.com/v${GITLAB_RUNNER_VERSION}/binaries/gitlab-runner-linux-amd64 \
  && chmod 0755 /usr/local/bin/gitlab-runner \
  && adduser --disabled-login --gecos 'GitLab CI Runner' ${GITLAB_RUNNER_USER} \
  && sudo -HEu ${GITLAB_RUNNER_USER} ln -sf ${GITLAB_RUNNER_DATA_DIR}/.ssh ${GITLAB_RUNNER_HOME_DIR}/.ssh \
  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -o /tmp/docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
+ && tar xvzf /tmp/docker.tgz -C /opt \
+ && rm -f /tmp/docker.tgz \
+ && ln -s /opt/docker/docker /usr/local/bin/docker
 
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod 755 /sbin/entrypoint.sh

@@ -84,6 +84,17 @@ configure_ci_runner() {
     if [[ -n ${RUNNER_CONCURRENT} ]];then
       sed -i "s/concurrent = .*/concurrent = ${RUNNER_CONCURRENT}/" ${GITLAB_RUNNER_DATA_DIR}/config.toml
     fi
+    if [[ -n ${RUNNER_ADVERTISE_SESSION_ADDRESS} ]];then
+      RUNNER_INTERNAL_SESSION_PORT=${RUNNER_INTERNAL_SESSION_PORT:-8920}
+      sed -i "/session_server/a  listen_address=\"0.0.0.0:${RUNNER_INTERNAL_SESSION_PORT}\"" ${GITLAB_RUNNER_DATA_DIR}/config.toml
+      CONTAINER_ID="$(basename $(cat /proc/1/cpuset))"
+      EXPOSED_PORT=$(/opt/docker/docker inspect ${CONTAINER_ID} | jq ".[0].NetworkSettings.Ports[\"${RUNNER_INTERNAL_SESSION_PORT}/tcp\"][0].HostPort" |grep -Po '\d+')
+      if [[ -n ${EXPOSED_PORT} ]];then
+        sed -i "/listen_address/a  advertise_address=\"${RUNNER_ADVERTISE_SESSION_ADDRESS}:${EXPOSED_PORT}\"" ${GITLAB_RUNNER_DATA_DIR}/config.toml
+      else
+        echo "Caution, no exposed port, session server won't work"
+      fi
+    fi
   fi
 }
 

@@ -1,6 +1,6 @@
 [![Docker Repository on Quay.io](https://quay.io/repository/sameersbn/gitlab-ci-multi-runner/status "Docker Repository on Quay.io")](https://quay.io/repository/sameersbn/gitlab-ci-multi-runner)
 
-# digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+# digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
 
 - [Introduction](#introduction)
   - [Contributing](#contributing)
@@ -51,7 +51,7 @@ Automated builds of the image are available on [Dockerhub](https://hub.docker.co
 > **Note**: Builds are also available on [Quay.io](https://quay.io/repository/sameersbn/gitlab-ci-multi-runner)
 
 ```bash
-docker pull digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+docker pull digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
 ```
 
 Alternatively you can build the image yourself.
@@ -71,7 +71,7 @@ docker run --name gitlab-ci-multi-runner -d --restart=always \
   --volume /srv/docker/gitlab-runner:/home/gitlab_ci_multi_runner/data \
   --env='CI_SERVER_URL=http://git.example.com/ci' --env='RUNNER_TOKEN=xxxxxxxxx' \
   --env='RUNNER_DESCRIPTION=myrunner' --env='RUNNER_EXECUTOR=shell' \
-  digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+  digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
 ```
 
 *Alternatively, you can use the sample [docker-compose.yml](docker-compose.yml) file to start the container using [Docker Compose](https://docs.docker.com/compose/)*
@@ -94,6 +94,7 @@ You can customise the runner with the following env variables:
 - RUNNER_DOCKER_ADDITIONAL_VOLUME: additionals volumes to share between host and jobs (multiple volumes must be separated by a space)
 - RUNNER_OUTPUT_LIMIT: output limit in KB that a build can produce
 - RUNNER_AUTOUNREGISTER: auto unregister the runner when the container stops
+- RUNNER_ADVERTISE_SESSION_ADDRESS: public url to the gitlab-runner docker server (e.g. `my-runner-server.com`). Use if and only if you want to set up [session server](https://docs.gitlab.com/ee/ci/interactive_web_terminal/). You'll also need to expose some port to reach container's `8920` port.
 
 ## Using docker executor
 
@@ -109,7 +110,7 @@ docker run --name gitlab-ci-multi-runner -d --restart=always \
   --env='CI_SERVER_URL=http://git.example.com/ci' --env='RUNNER_TOKEN=xxxxxxxxx' \
   --env='RUNNER_DESCRIPTION=myrunner' --env='RUNNER_EXECUTOR=docker' \
   --env='RUNNER_DOCKER_IMAGE=docker:latest' --env='RUNNER_DOCKER_MODE=socket'
-  digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+  digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
 ```
 
 Start the docker runner in dind mode :
@@ -120,7 +121,7 @@ docker run --name gitlab-ci-multi-runner -d --restart=always \
   --env='CI_SERVER_URL=http://git.example.com/ci' --env='RUNNER_TOKEN=xxxxxxxxx' \
   --env='RUNNER_DESCRIPTION=myrunner' --env='RUNNER_EXECUTOR=docker' \
   --env='RUNNER_DOCKER_IMAGE=docker:latest' --env='RUNNER_DOCKER_MODE=dind'
-  digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+  digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
 ```
 
 If you want to share volumes between your containers and the runner in socket mode, use the `RUNNER_DOCKER_ADDITIONAL_VOLUME` variable to share `/builds:/builds`.
@@ -141,7 +142,7 @@ You can customize the launch command by specifying arguments to `gitlab-ci-multi
 ```bash
 docker run --name gitlab-ci-multi-runner -it --rm \
   --volume /srv/docker/gitlab-runner:/home/gitlab_ci_multi_runner/data \
-  digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0 --help
+  digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0 --help
 ```
 
 ## Persistence
@@ -189,7 +190,7 @@ To upgrade to newer releases:
   1. Download the updated Docker image:
 
   ```bash
-  docker pull digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+  docker pull digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
   ```
 
   2. Stop the currently running image:
@@ -209,7 +210,7 @@ To upgrade to newer releases:
   ```bash
   docker run -name gitlab-ci-multi-runner -d \
     [OPTIONS] \
-    digitallumberjack/docker-gitlab-ci-multi-runner:v10.7.0
+    digitallumberjack/docker-gitlab-ci-multi-runner:v11.9.0
   ```
 
 ## Shell Access
